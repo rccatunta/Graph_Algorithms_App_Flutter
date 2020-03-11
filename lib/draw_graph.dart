@@ -6,9 +6,15 @@ import 'nodes_edges.dart';
 
 
 class DrawPage extends StatefulWidget {
+  List<double> px=List<double>();
+  List<double> py=List<double>();
+  List<int> edge1 = List<int>();
+  List<int> edge2 = List<int>();
+  List<String> nameNode = List<String>();
+  List<String> nameEdge = List<String>();
   @override
   State<StatefulWidget> createState(){
-    return MainDraw();
+    return MainDraw(px,py,edge1,edge2,nameNode,nameEdge);
   }
 }
 class MainDraw extends State<DrawPage> {
@@ -17,14 +23,18 @@ class MainDraw extends State<DrawPage> {
   bool move=false;
   List<double> px=List<double>();
   List<double> py=List<double>();
+  List<String> nameNode = List<String>();
+  List<String> nameEdge = List<String>();
   List<int> cr=List<int>();
   List<int> cg=List<int>();
   List<int> cb=List<int>();
   List<int> edge1 = List<int>();
   List<int> edge2 = List<int>();
   int conection = -1;
-  List<bool> act=List<bool>();
   var gr=Random();
+  TextEditingController _textFieldNodeController = TextEditingController();
+  TextEditingController _textFieldEdgeController = TextEditingController();
+  MainDraw(this.px,this.py,this.edge1,this.edge2,this.nameNode,this.nameEdge);
   //Main App
   @override
   Widget build(BuildContext context) {
@@ -38,7 +48,7 @@ class MainDraw extends State<DrawPage> {
         onPanDown: (DragDownDetails details)=> _onPanDown(details),
         child: Stack(
           children: <Widget>[
-            CustomPaint(painter: Pelotas(px,py,cr,cg,cb,edge1,edge2),child: Container(),),
+            CustomPaint(painter: Pelotas(px,py,cr,cg,cb,edge1,edge2,nameNode,nameEdge),child: Container(),),
           ],
         ),
       ),
@@ -100,6 +110,7 @@ class MainDraw extends State<DrawPage> {
         if(conection != -1){
           edge1.add(conection);
           edge2.add(sel);
+          _displayDialogEdge(context);
           conection = -1;
         }
         else{
@@ -115,6 +126,7 @@ class MainDraw extends State<DrawPage> {
           cr.add(gr.nextInt(256));
           cg.add(gr.nextInt(256));
           cb.add(gr.nextInt(256));
+          _displayDialogNode(context);
         }
       }
     });
@@ -136,4 +148,61 @@ class MainDraw extends State<DrawPage> {
     }
     return res;
   }
+  _displayDialogNode(BuildContext context) async{
+    return showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Text('Ingrese Nombre del Nodo'),
+            content: TextField(
+              controller: _textFieldNodeController,
+              decoration: InputDecoration(hintText: 'Nombre del Nodo'),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Ok'),
+                onPressed: (){
+                  print('The name node is:');
+                  print(_textFieldNodeController.text);
+                  setState(() {
+                    nameNode.add(_textFieldNodeController.text);
+                    _textFieldNodeController.clear();
+                  });
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
+  _displayDialogEdge(BuildContext context) async{
+    return showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Text('Ingrese Peso de la Conexion'),
+            content: TextField(
+              controller: _textFieldEdgeController,
+              decoration: InputDecoration(hintText: 'Peso'),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Ok'),
+                onPressed: (){
+                  print('The name node is:');
+                  print(_textFieldEdgeController.text);
+                  setState(() {
+                    nameEdge.add(_textFieldEdgeController.text);
+                    _textFieldEdgeController.clear();
+                  });
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
 }
+

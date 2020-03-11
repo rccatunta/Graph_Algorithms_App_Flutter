@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 class Pelotas extends CustomPainter{
   List<double>px,py;
   List<int>cr,cg,cb,edge1,edge2;
-  Pelotas(this.px,this.py,this.cr,this.cg,this.cb,this.edge1,this.edge2);
+  List<String> nameNode,nameEdge;
+  Pelotas(this.px,this.py,this.cr,this.cg,this.cb,this.edge1,this.edge2,this.nameNode,this.nameEdge);
   @override
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
@@ -18,10 +19,7 @@ class Pelotas extends CustomPainter{
     for(int i=0;i<px.length;i++){
       paint.color=Color.fromARGB(255,cr[i],cg[i],cb[i]);
       canvas.drawCircle(Offset(px[i], py[i]), 30, paint);
-      TextSpan span = new TextSpan(style: new TextStyle(color: Colors.black), text: i.toString());
-      TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.ltr);
-      tp.layout();
-      tp.paint(canvas, new Offset(px[i]-10, py[i]-10));
+      _makeText(canvas, nameNode[i],new Offset(px[i]-10, py[i]-10));
     }
     //Draw Connections
     paint.color = Colors.black;
@@ -86,6 +84,7 @@ class Pelotas extends CustomPainter{
         path.quadraticBezierTo(px[edge1[i]]-50,py[edge1[i]] - 50,px[edge1[i]]-30, py[edge1[i]]);
         path = ArrowPath.make(path: path);
         canvas.drawPath(path, paint..color = Colors.black);
+        _makeText(canvas,nameEdge[i],new Offset(px[edge1[i]]-50,py[edge1[i]] - 50));
       }
       else{
         path.moveTo(pcx1, pcy1);
@@ -104,17 +103,21 @@ class Pelotas extends CustomPainter{
         if(result){
           if(dx>=dy) {
             path.quadraticBezierTo(mid1, mid2 - 50, pcx2, pcy2);
+            _makeText(canvas,nameEdge[i],new Offset(mid1,mid2-50));
           }
           else{
             path.quadraticBezierTo(mid1-50, mid2, pcx2, pcy2);
+            _makeText(canvas,nameEdge[i],new Offset(mid1-50,mid2));
           }
         }
         else{
           if(dx>=dy){
             path.quadraticBezierTo(mid1,mid2+50,pcx2,pcy2);
+            _makeText(canvas,nameEdge[i],new Offset(mid1,mid2+50));
           }
           else{
             path.quadraticBezierTo(mid1+50,mid2,pcx2,pcy2);
+            _makeText(canvas,nameEdge[i],new Offset(mid1+50,mid2));
           }
 
         }
@@ -124,7 +127,12 @@ class Pelotas extends CustomPainter{
       }
     }
   }
-
+  void _makeText(Canvas canvas, String text, Offset position){
+    TextSpan span = new TextSpan(style: new TextStyle(color: Colors.black), text: text);
+    TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.ltr);
+    tp.layout();
+    tp.paint(canvas, position);
+  }
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     // TODO: implement shouldRepaint
